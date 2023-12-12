@@ -1,3 +1,5 @@
+package Login;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +18,8 @@ public class Users {
     private String Usuario;
     private String Contraseña;
     private Map<String, PerfilUsuario> Perfiles;
-    private Map<String,Contacto> contactos;
+    private LinkedList<Contacto> contactos;
+    private List<Users> amigos;
     private List<Publicacion> publicaciones;
     private Queue<String> solicitudesAmistad;
     private Set<String> amigosEnComun;
@@ -25,7 +28,8 @@ public class Users {
 		this.Usuario = usuario;
 		this.Contraseña = contraseña;
 		this.Perfiles = new HashMap<>();
-        this.contactos = new HashMap<>();
+        this.contactos = new LinkedList<>();
+        this.amigos = new LinkedList<>();
         this.publicaciones = new LinkedList<>();
         this.solicitudesAmistad = new LinkedList<>();
         this.amigosEnComun = new HashSet<>();
@@ -46,85 +50,65 @@ public class Users {
 	public void setContraseña(String contraseña) {
 		Contraseña = contraseña;
 	}
+	
+	public LinkedList<Contacto> getContactos() {
+        return contactos;
+    }
+
+    public List<Users> getAmigos() {
+        return amigos;
+    }
 
     public List<Publicacion> getPublicaciones() {
         return publicaciones;
+    }
+    
+    
+    public void agregarContacto(String usuario) {
+        Contacto nuevoContacto = new Contacto(usuario);
+        contactos.add(nuevoContacto);
+    }
+
+    public void eliminarContacto(String usuario) {
+        Contacto contactoAEliminar = new Contacto(usuario);
+        contactos.remove(contactoAEliminar);
+    }
+
+    public void agregarAmigo(Users amigo) {
+        amigos.add(amigo);
+    }
+
+    public void realizarPublicacion(String contenido) {
+        Publicacion publicacion = new Publicacion(this, contenido);
+        publicaciones.add(publicacion);
+    }
+    
+    public void agregarPerfil(PerfilUsuario perfil) {
+        Perfiles.put(Usuario, perfil);
+        guardarPerfil();
+    }
+    
+    public void guardarPerfil() {
+        try  {
+        	PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_PERFILES,true));
+            for (PerfilUsuario u : Perfiles.values()) {
+                bw.println(Usuario+","+u.getNombre()+","+u.getTelefono()+u.getFechaNa()+","+u.getEstado()+","+u.getInteres());
+                bw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public PerfilUsuario obtenerPerfil() {
         return Perfiles.get(Usuario);
     }
-
-    public void agregarPerfil(PerfilUsuario perfil) {
-    	Perfiles.put(Usuario, perfil);
-        guardarPerfil();
-    }
-
-    public void guardarPerfil() {
-        try  {
-            PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_PERFILES,true));
-            for (PerfilUsuario u : Perfiles.values()) {
-                bw.println(Usuario+","+u.getNombre()+","+u.getFoto()+","+u.getTelefono()+","+u.getFechaNa()+","+u.getEstado()+","+u.getInteres());
-                bw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     
-    
-
-
-    public void agregarContacto(Contacto contacto) {
-        guardarContacto();
-    }
-    public void guardarContacto() {
-        try {
-            PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_CONTACTOS, true));
-            for (Contacto u : contactos.values()) {
-                bw.println(Usuario + "," + u.getUsuario() + "," + u.getTelefono());
-                bw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public void enviarSolicitudAmistad(String usuarioDestino) {
-        guardarSolicitud(usuarioDestino);
+        solicitudesAmistad.add(usuarioDestino);
     }
 
-    public void guardarSolicitud(String destino) {
-        try {
-            PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_SOLICITUDES, true));
-                bw.println(Usuario + "->" + destino);
-                bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void Solicitudes(String usuario){
-        try {
-            BufferedReader lector = new BufferedReader(new FileReader(NombreArchivos.TXT_SOLICITUDES));
-            String linea;
-            while ((linea = lector.readLine()) != null) {
-                String [] datos = linea.split("->");
-                String user = datos[0];
-                String destino =datos[1];
-                if (usuario==destino){
-                    solicitudesAmistad.offer(destino);
-                }
-            }
-            lector.close();
-        }catch( IOException ioe ) {
-            JOptionPane.showMessageDialog(null," no se pudo leer el archivo.");
-        }
-    }
-
-   /* public void procesarSolicitudes(RedSocial redSocial) {
+    public void procesarSolicitudes(RedSocial redSocial) {
         while (!solicitudesAmistad.isEmpty()) {
             String remitenteUsuario = solicitudesAmistad.poll();
             Users remitente = redSocial.obtenerUsuario(remitenteUsuario);
@@ -149,40 +133,18 @@ public class Users {
             }
         }
     }
-
-    public void aceptarSolicitudAmistad() {
+    
+    /*public void aceptarSolicitudAmistad() {
         if (!solicitudesAmistad.isEmpty()) {
             Users solicitante = solicitudesAmistad.poll();
             amigos.add(solicitante);
             solicitante.getAmigos().add(this);
         }
     }*/
-
-    public void actualizarAmigosEnComun() {
-        Set<String> nuevosAmigosEnComun = obtenerAmigosEnComun();
-        amigosEnComun.clear();
-        amigosEnComun.addAll(nuevosAmigosEnComun);
-    }
-    private Set<String> obtenerAmigosEnComun() {
-        Set<String> amigosEnComun = new HashSet<>(contactos.keySet());
-
-        // Iterar sobre los contactos del usuario actual
-        for (Map.Entry<String, Contacto> entry : contactos.entrySet()) {
-            String correoContacto = entry.getKey();
-
-            // Verificar si el contacto también está en los contactos del otro usuario
-            for (Users otroUsuario : RedSocial.usuarios.values()) {
-                if (otroUsuario != this && otroUsuario.contactos.containsKey(correoContacto)) {
-                    amigosEnComun.add(correoContacto);
-                }
-            }
-        }
-        return amigosEnComun;
-    }
-
-
     
-    public int publicacionesSize() {
-    	return publicaciones.size();
+    public Set<String> obtenerAmigosEnComun(Users otroUsuario) {
+        Set<String> amigosEnComun = new HashSet<>(this.amigosEnComun);
+        amigosEnComun.retainAll(otroUsuario.amigosEnComun);
+        return amigosEnComun;
     }
 }

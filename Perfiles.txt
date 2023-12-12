@@ -1,3 +1,8 @@
 ajaj,asdasd, ,864654,1/Enero/2023,-,- 
-Jared,Jared, ,727146124,6/Julio/2023,-,- 
-Usuario,Nombre, ,73515673,1/Enero/2023, , 
+Jared,Jared, ,727146124,6/Julio/2023,Soltero,Dormir
+Usuario,Nombre, ,73515673,1/Enero/2023,Desconocido , Desconocido
+Yomar,Yomar, ,69753223,19/Diciembre/2003,Relación,Juegos
+Jisus,Jesus, ,87612499,12/Enerio/2003,Soltero,Gym
+Josh,Josue, ,77161237,23/Octubre/2002,Soltero,Gym
+Mateo,Mateo, ,7651247,12/Marzo/2002,Soltero,Bailar
+alejandro,Alejandro, ,73515673,19/Diciembre/2001,Relación,Juegos

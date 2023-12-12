@@ -1,3 +1,4 @@
+package Login;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,7 +12,7 @@ import javax.swing.JOptionPane;
 
 
 public class RedSocial {
-     static Map<String, Users> usuarios;
+    private Map<String, Users> usuarios; 
 
     public RedSocial() {
         this.usuarios = new HashMap<>();
@@ -25,18 +26,6 @@ public class RedSocial {
     public void guardarUsuarios() {
         try  {
         	PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_USUARIOS,true));
-            for (Users u : usuarios.values()) {
-                bw.println(u.getUsuario()+","+u.getContraseña());
-                bw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void guardarPublicacion(Publicacion publicacion) {
-        try  {
-        	PrintWriter bw = new PrintWriter(new FileWriter(NombreArchivos.TXT_PUBLICACIONES,true));
             for (Users u : usuarios.values()) {
                 bw.println(u.getUsuario()+","+u.getContraseña());
                 bw.close();
@@ -98,6 +87,29 @@ public class RedSocial {
 		return encontrado;
 	}
 
+    /*public void agregarContacto(String telUsuario, String telContacto) {
+        Users usuario = usuarios.get(telUsuario);
+        Users contacto = usuarios.get(telContacto);
+
+        if (usuario != null && contacto != null) {
+            usuario.agregarContacto(contacto);
+            System.out.println("Contacto agregado con éxito.");
+        } else {
+            System.out.println("Usuario o contacto no encontrado.");
+        }
+    }*/
+
+    public void agregarAmigo(String telUsuario, String telAmigo) {
+        Users usuario = usuarios.get(telUsuario);
+        Users amigo = usuarios.get(telAmigo);
+
+        if (usuario != null && amigo != null) {
+            usuario.agregarAmigo(amigo);
+            System.out.println("Amigo agregado con éxito.");
+        } else {
+            System.out.println("Usuario o amigo no encontrado.");
+        }
+    }
 
     public void mostrarPublicaciones(String usuario) {
         Users u = usuarios.get(usuario);

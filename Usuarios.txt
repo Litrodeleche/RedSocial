@@ -1,7 +1,9 @@
 alejandro,alejandro123
 Yomar,yomar123
-Dominic,dominic123
 Mateo,mateo123
 ajaj,123
 Jared,jared123
 Usuario,1234
+dominic,1234
+Jisus,1234
+Josh,1234

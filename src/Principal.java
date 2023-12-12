@@ -22,9 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+
+
 public class Principal extends JFrame {
     private JPanel contentPane;
-    private JTextField textField;
+    private JTextField txtBuscar;
     private JLabel lblNombreUsuario;
     private String nombre;
     private String nombreUs;
@@ -40,7 +42,7 @@ public class Principal extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Principal frame = new Principal();
+                    Principal frame = new Principal("");
                     frame.setVisible(true);
                 } catch (Exception var2) {
                     var2.printStackTrace();
@@ -50,7 +52,8 @@ public class Principal extends JFrame {
         });
     }
 
-    public Principal() {
+    public Principal(String NombreUs) {
+    	this.nombreUs = NombreUs;
         setResizable(true);
         setTitle("Pagina Principal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,7 +83,7 @@ public class Principal extends JFrame {
         PaginaInicio.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Publicaciones p = new Publicaciones();
+                Publicaciones p = new Publicaciones(nombreUs);
                 panel.removeAll();
                 panel.add(p);
                 panel.repaint();
@@ -202,7 +205,7 @@ public class Principal extends JFrame {
                 Amigos.setBackground(new Color(121, 179, 192));
             }
             public void mouseClicked(MouseEvent e) {
-                Amigos p = new Amigos();
+                Amigos p = new Amigos(nombreUs);
                 panel.removeAll();
                 panel.add(p);
                 panel.repaint();
@@ -249,7 +252,7 @@ public class Principal extends JFrame {
                 btnPublicar.setBackground(new Color(121, 179, 192));
             }
             public void mouseClicked(MouseEvent e) {
-                Publicar p = new Publicar();
+                Publicar p = new Publicar(lblNombreUsuario.getText());
                 panel.removeAll();
                 panel.add(p);
                 panel.repaint();
@@ -280,7 +283,7 @@ public class Principal extends JFrame {
         lblBienvenido.setBounds(35, 10, 185, 41);
         Bienvenido.add(lblBienvenido);
 
-        lblNombreUsuario = new JLabel("{Nombre usuario}");
+        lblNombreUsuario = new JLabel(nombreUs);
         lblNombreUsuario.setForeground(SystemColor.inactiveCaptionBorder);
         lblNombreUsuario.setBackground(SystemColor.inactiveCaptionBorder);
         lblNombreUsuario.setFont(new Font("Yu Gothic Medium", Font.BOLD, 33));
@@ -288,7 +291,7 @@ public class Principal extends JFrame {
         Bienvenido.add(lblNombreUsuario);
 
         panel = new JPanel();
-        Publicaciones p = new Publicaciones();
+        Publicaciones p = new Publicaciones(nombreUs);
         panel.setBackground(new Color(251, 233, 218));
         panel.setBounds(239, 165, 732, 503);
         panel.removeAll();
@@ -304,10 +307,49 @@ public class Principal extends JFrame {
         lblBuscar.setBounds(269, 10, 112, 57);
         Fondo.add(lblBuscar);
 
-        textField = new JTextField();
-        textField.setBounds(391, 26, 558, 28);
-        Fondo.add(textField);
-        textField.setColumns(10);
+        txtBuscar = new JTextField();
+		txtBuscar.setBounds(391, 26, 412, 28);
+		Fondo.add(txtBuscar);
+		txtBuscar.setColumns(10);
+		
+		Button btnBuscar = new Button("ir");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String usuario = txtBuscar.getText();
+				 
+	                try {
+	                    BufferedReader lector = new BufferedReader(new FileReader("Perfiles.txt"));
+	                    String linea;
+	                    while ((linea = lector.readLine()) != null) {
+	                        String [] datos = linea.split(",");
+	                        String nombreUsuario = datos[0];
+	                        if(nombreUsuario.equals(usuario)) {
+	                        	nombre = datos[1];
+	                        	String foto = datos[2];
+	                        	telefono = datos[3];
+	                        	nacimiento = datos[4];
+	                        	estado = datos[5];
+	                        	interes = datos[6];
+	                        	break;
+	                        }
+	                    }
+	                    lector.close();
+	                }catch( IOException ioe ) {
+	                    JOptionPane.showMessageDialog(null," no se pudo leer el archivo.");
+	                }
+	                Agregar p = new Agregar(nombreUs,usuario);
+	                System.out.println(nombreUs+nombre+telefono+nacimiento+estado+interes);
+	                p.setPerfil(nombre,telefono,estado,nacimiento,interes);
+	                panel.removeAll();
+	                panel.add(p);
+	                panel.repaint();
+	                panel.revalidate();
+	            }
+			
+		});
+		btnBuscar.setBackground(SystemColor.desktop);
+		btnBuscar.setBounds(809, 32, 44, 22);
+		Fondo.add(btnBuscar);
 
     }
     public void setNombreUsuario(String nombreUsuario) {

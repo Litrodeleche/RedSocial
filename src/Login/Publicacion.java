@@ -1,17 +1,15 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+package Login;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 class Publicacion {
-    private String autor;
+    private Users autor;
     private String contenido;
     private LocalDateTime fechaPublicacion;
     private List<Comentario> comentarios;
 
-    public Publicacion(String autor, String contenido) {
+    public Publicacion(Users autor, String contenido) {
         this.autor = autor;
         this.contenido = contenido;
         this.fechaPublicacion = LocalDateTime.now();
@@ -33,21 +31,4 @@ class Publicacion {
     public void agregarComentario(Comentario comentario) {
         comentarios.add(comentario);
     }
-
-	@Override
-	public String toString() {
-		return autor + ";" + fechaPublicacion + ";" +contenido;
-	}
-	public void guardarEnArchivo() {
-        String nombreArchivo = "Publicaciones.txt";
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo, true))) {
-            // Escribir la representación en cadena de la publicación en el archivo
-            writer.write(this.toString() + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    
 }
